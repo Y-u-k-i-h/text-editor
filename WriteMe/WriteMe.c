@@ -14,7 +14,7 @@ void enableRawMode() {
 	atexit(disableRawMode);
 
 	struct termios raw  = orig_termios;
-	raw.c_lflag &= ~(ECHO); /* Turn off ECHO */
+	raw.c_lflag &= ~(ECHO | ICANON); /* Turn off ECHO and ECHO */
 
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw); /* Updates terminal settings */
 }
