@@ -13,9 +13,9 @@ int main() {
 	char c;
 	while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q') {
 		if (iscntrl(c)) {
-			printf("%d\n", c);
+			printf("%d\r\n", c);
 		} else {
-			printf("%d ('%c')\n", c, c);
+			printf("%d ('%c')\r\n", c, c);
 		}
 	}
 	
@@ -27,13 +27,21 @@ void disableRawMode() {
 }
 
 void enableRawMode() {
-
-	tcgetattr(STDIN_FILENO, &orig_termios); /* Fetch currernt terminal settings */
+	
+	/* Fetch currernt terminal settings */
+	tcgetattr(STDIN_FILENO, &orig_termios); 
 	atexit(disableRawMode);
 
 	struct termios raw  = orig_termios;
-	raw.c_lflag &= ~(ECHO | ICANON | ISIG); /* Turn off canonical, echo, sigs */
 
-	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw); /* Updates terminal settings */
+	/* Turn off some terminal artributes */
+	raw.c_cflag |= (CS8);
+	raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
+	raw.c_oflag &= ~(OPOST);
+	raw.c_iflag &= ~(ICRNL | IXON);
+	raw.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
+
+	/* Updates terminal settings */
+	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 
