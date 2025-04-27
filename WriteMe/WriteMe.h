@@ -7,4 +7,4 @@ void enableRawMode();
 
 void diasableRawMode();
 
-
+void die(const char* s);
